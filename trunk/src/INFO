@@ -1,0 +1,37 @@
+== common ==
+	Contains utility headers and code shared between at least two of the
+	following components.
+
+
+Communication between ftpif/slave/webif/sitebot and the master happens
+via an HTTP-based protocol and JSON-formatted data.
+
+
+== ftpif (mandatory) ==
+	Handles incoming FTP client connections.
+
+	Single threaded, event-based.
+
+== master (mandatory) ==
+	* Manages users
+	* Manages the VFS
+	* Slaves connect here
+	* Distributes events
+
+	Mostly single threaded, but offloads possibly long-running tasks
+	to their own threads (which call back into the main thread via
+	an appropriate async signaling mechanism). Actor model?
+
+== sitebot (optional) ==
+	IRC site bot.
+
+== slave (mandatory) ==
+	Well, the transfer slave.
+
+	Should probably use a thread pool for maximum concurrency.
+	Investigate Actor model too.
+
+== webif (optional) ==
+	Provides a convenient web interface.
+
+	Single threaded.
