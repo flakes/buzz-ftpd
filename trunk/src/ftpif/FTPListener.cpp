@@ -13,7 +13,7 @@ CFTPListener::CFTPListener(PAsioServicePool a_ioServicePool)
 	m_acceptor(m_ioServicePool->GetIOService()),
 	m_newConnection(new CFTPConnection(m_ioServicePool->GetIOService()))
 {
-	
+
 }
 
 
