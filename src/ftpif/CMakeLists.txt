@@ -14,4 +14,5 @@ add_executable (
 target_link_libraries (
 	buzz-ftpif
 	${Boost_LIBRARIES}
+	${OPENSSL_LIBRARIES}
 )

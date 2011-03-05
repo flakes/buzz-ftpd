@@ -34,6 +34,7 @@ class CFTPConnection :
 
 		void OnRead(const boost::system::error_code& e);
 		void OnWrite(const boost::system::error_code& e);
+		void OnShookHands(const boost::system::error_code& e);
 
 		/** CFTPInterpreter implementation **/
 		virtual void FTPSend(int, const std::string&);
@@ -43,6 +44,15 @@ class CFTPConnection :
 		virtual bool OnUser(const std::string&);
 		virtual void OnPassword(const std::string&);
 		virtual void OnQuit(std::string&);
+
+		/** SSL stuff **/
+		bool m_sslHandshakeAfterNextWrite;
+		boost::shared_ptr<boost::asio::ssl::context> m_sslCtx;
+		boost::shared_ptr<boost::asio::ssl::stream<boost::asio::ip::tcp::socket&> > m_sslSocket;
+		bool m_sslActive;
+
+		/** internal helpers **/
+		void _ReadLineAsync();
 };
 
 typedef boost::shared_ptr<CFTPConnection> PFTPConnection;

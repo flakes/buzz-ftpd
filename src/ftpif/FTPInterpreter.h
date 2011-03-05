@@ -11,6 +11,7 @@
 typedef enum _FTP_INTERPRETER_STATES
 {
 	FTIST_INITIAL = 1,
+	FTIST_GOT_AUTH,
 	FTIST_GOT_USER,
 	FTIST_GOT_PASS,
 	//...
@@ -45,7 +46,8 @@ class CFTPInterpreter
 
 		/**
 		 * Called by this class when a response needs to be sent back to the client.
-		 * Be aware that a_response may contain CRLFs!
+		 * Be aware that a_response may contain CRLFs! a_status is just for informational
+		 * purposes and is not to be incorporated into the response in any way.
 		 **/
 		virtual void FTPSend(int a_status, const std::string& a_response) = 0;
 
@@ -107,6 +109,21 @@ class CFTPInterpreter
 		int32_t m_pbsz;
 		bool m_secureCC;
 		char m_prot; // C or P
+
+		// method map:
+		typedef std::map<const std::string, bool (CFTPInterpreter::*)(const std::string& a_cmd, const std::string& a_args)> TClientCommandMap;
+		TClientCommandMap m_ccHandlers;
+
+		// client command handlers to be used with aforementioned map:
+		bool _CC_AUTH(const std::string&, const std::string&);
+		bool _CC_FEAT(const std::string&, const std::string&);
+		bool _CC_SYST(const std::string&, const std::string&);
+		bool _CC_NOOP(const std::string&, const std::string&);
+
+		bool _CC_NotImplemented(const std::string&, const std::string&);
+
+		// utility methods:
+		void FTPResponse(int a_status, const std::string& a_text);
 };
 
 
