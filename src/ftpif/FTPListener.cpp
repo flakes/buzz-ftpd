@@ -8,10 +8,10 @@
 #include "FTPListener.h"
 
 
-CFTPListener(PAsioServicePool a_ioServicePool)
+CFTPListener::CFTPListener(PAsioServicePool a_ioServicePool)
 	: m_ioServicePool(a_ioServicePool),
-	m_acceptor(m_ioServicePool.GetIOService()),
-	m_newConnection(new CFTPConnection(m_ioServicePool.GetIOService()))
+	m_acceptor(m_ioServicePool->GetIOService()),
+	m_newConnection(new CFTPConnection(m_ioServicePool->GetIOService()))
 {
 	
 }
@@ -20,7 +20,7 @@ CFTPListener(PAsioServicePool a_ioServicePool)
 bool CFTPListener::Listen(unsigned short a_port, const std::string& a_bindHost)
 {
 	boost::asio::ip::tcp::resolver l_resolver(m_acceptor.io_service());
-	boost::asio::ip::tcp::resolver::query l_query(a_bindHost, a_port);
+	boost::asio::ip::tcp::resolver::query l_query(a_bindHost, lexical_cast<std::string>(a_port));
 	boost::asio::ip::tcp::endpoint l_endpoint = *l_resolver.resolve(l_query);
 	m_acceptor.open(l_endpoint.protocol());
 	m_acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
@@ -42,7 +42,7 @@ void CFTPListener::OnAccept(const boost::system::error_code& e)
 		m_newConnection->Start();
 
 		// prepare next connection:
-		m_newConnection.reset(new CFTPConnection(m_ioServicePool.GetIOService()));
+		m_newConnection.reset(new CFTPConnection(m_ioServicePool->GetIOService()));
 
 		m_acceptor.async_accept(m_newConnection->GetSocket(),
 			boost::bind(&CFTPListener::OnAccept, this,
@@ -52,4 +52,9 @@ void CFTPListener::OnAccept(const boost::system::error_code& e)
 	{
 		// :TODO:
 	}
+}
+
+
+CFTPListener::~CFTPListener()
+{
 }

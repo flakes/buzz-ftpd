@@ -2,6 +2,8 @@
 #ifndef _FTP_CONNECTION_H
 #define _FTP_CONNECTION_H
 
+#include "FTPInterpreter.h"
+
 class CFTPListener;
 
 /**
@@ -13,7 +15,7 @@ class CFTPConnection :
 	public CFTPInterpreter
 {
 	public:
-		CFTPConnection(boost::asio::io_service& a_ioService, CFTPListener& a_listener);
+		CFTPConnection(boost::asio::io_service& a_ioService);
 
 		void Start();
 		void Stop();
@@ -22,11 +24,20 @@ class CFTPConnection :
 
 	protected:
 		boost::asio::io_service& m_ioService;
-		CFTPListener& m_listener;
 		boost::asio::ip::tcp::socket m_socket;
+		boost::asio::streambuf m_lineBuf;
 
-		void OnRead(const boost::system::error_code& e, std::size_t a_bytesTransferred);
+		void OnRead(const boost::system::error_code& e);
 		void OnWrite(const boost::system::error_code& e);
+
+		/** CFTPInterpreter implementation **/
+		virtual void FTPSend(int, const std::string&);
+		virtual void FTPDisconnect();
+		virtual bool OnAuth(const std::string&);
+		virtual int32_t OnPBSZ(int32_t);
+		virtual bool OnUser(const std::string&);
+		virtual void OnPassword(const std::string&);
+		virtual void OnQuit(std::string&);
 };
 
 typedef boost::shared_ptr<CFTPConnection> PFTPConnection;
