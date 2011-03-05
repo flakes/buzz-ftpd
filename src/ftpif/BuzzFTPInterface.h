@@ -23,6 +23,9 @@
 // conversion & utilities
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
+#include <boost/numeric/conversion/cast.hpp>
+using boost::numeric_cast;
+#include <boost/assert.hpp>
 
 // string helpers
 #include <boost/algorithm/string/trim.hpp>

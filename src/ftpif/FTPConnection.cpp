@@ -97,18 +97,40 @@ void CFTPConnection::OnShookHands(const boost::system::error_code& e)
 {
 	std::cout << "Shook hands (" << e << ")!" << std::endl;
 
+	// :TODO: try to differentiate FeedSSLHandshake arguments
+	// according to RFC 4217, section 10.1.
+
 	if(!e)
 	{
+		m_sslActive = true;
+
+		CFTPInterpreter::FeedSSLHandshake(true, true);
+
 		_ReadLineAsync();
+	}
+	else
+	{
+		CFTPInterpreter::FeedSSLHandshake(false, false);
+
+		// control connection will effectively be terminated here.
 	}
 }
 
 
 void CFTPConnection::_ReadLineAsync()
 {
-	boost::asio::async_read_until(m_sslActive ? m_sslSocket : m_socket, m_lineBuf, "\n",
-		boost::bind(&CFTPConnection::OnRead, shared_from_this(),
-		boost::asio::placeholders::error));
+	if(!m_sslActive)
+	{
+		boost::asio::async_read_until(m_socket, m_lineBuf, "\n",
+			boost::bind(&CFTPConnection::OnRead, shared_from_this(),
+			boost::asio::placeholders::error));
+	}
+	else
+	{
+		boost::asio::async_read_until(*m_sslSocket, m_lineBuf, "\n",
+			boost::bind(&CFTPConnection::OnRead, shared_from_this(),
+			boost::asio::placeholders::error));
+	}
 }
 
 
@@ -120,9 +142,18 @@ void CFTPConnection::FTPSend(int a_status, const std::string& a_response)
 {
 	CAsioSmartBuffer l_buf(a_response);
 
-	boost::asio::async_write(m_sslActive ? m_sslSocket : m_socket, l_buf,
-		boost::bind(&CFTPConnection::OnWrite, shared_from_this(),
-		boost::asio::placeholders::error));
+	if(!m_sslActive)
+	{
+		boost::asio::async_write(m_socket, l_buf,
+			boost::bind(&CFTPConnection::OnWrite, shared_from_this(),
+			boost::asio::placeholders::error));
+	}
+	else
+	{
+		boost::asio::async_write(*m_sslSocket, l_buf,
+			boost::bind(&CFTPConnection::OnWrite, shared_from_this(),
+			boost::asio::placeholders::error));
+	}
 }
 
 void CFTPConnection::FTPDisconnect()
@@ -153,9 +184,9 @@ bool CFTPConnection::OnAuth(const std::string& a_method)
 }
 
 
-int32_t CFTPConnection::OnPBSZ(int32_t a_size)
+uint32_t CFTPConnection::OnPBSZ(uint32_t a_size)
 {
-	return 100;
+	return a_size;
 }
 
 
@@ -167,7 +198,7 @@ bool CFTPConnection::OnUser(const std::string& a_name)
 
 void CFTPConnection::OnPassword(const std::string& a_password)
 {
-	return;
+	FeedCredentialResult(true, "H\n E\n  L\n   L\n    O");
 }
 
 

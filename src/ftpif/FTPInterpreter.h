@@ -12,6 +12,7 @@ typedef enum _FTP_INTERPRETER_STATES
 {
 	FTIST_INITIAL = 1,
 	FTIST_GOT_AUTH,
+	FTIST_AUTH_SUCCESSFUL,
 	FTIST_GOT_USER,
 	FTIST_GOT_PASS,
 	//...
@@ -67,10 +68,17 @@ class CFTPInterpreter
 		virtual bool OnAuth(const std::string& a_method) = 0;
 
 		/**
+		 * Called by the implementing class when the SSL hand shake has finished.
+		 * @param a_secured bool Is the connection now secure?
+		 * @param a_ok bool Is the connection ready to be used?
+		 **/
+		void FeedSSLHandshake(bool a_secured, bool a_ok);
+
+		/**
 		 * The implementing class must return a_size, or, if a_size is too large,
 		 * an alternative (lower) protection buffer size.
 		 **/
-		virtual int32_t OnPBSZ(int32_t a_size) = 0;
+		virtual uint32_t OnPBSZ(uint32_t a_size) = 0;
 
 		/**
 		 * The implementing class must return whether the user name can be accepted.
@@ -91,7 +99,7 @@ class CFTPInterpreter
      * the client provided valid credentials.
      * @see OnPassword
      **/
-    void FeedAuthResult(bool a_positive);
+    void FeedCredentialResult(bool a_positive, const std::string& a_banner = "");
 
 
 		/**
@@ -108,6 +116,7 @@ class CFTPInterpreter
 
 		int32_t m_pbsz;
 		bool m_secureCC;
+		bool m_authenticated;
 		char m_prot; // C or P
 
 		// method map:
@@ -119,6 +128,10 @@ class CFTPInterpreter
 		bool _CC_FEAT(const std::string&, const std::string&);
 		bool _CC_SYST(const std::string&, const std::string&);
 		bool _CC_NOOP(const std::string&, const std::string&);
+		bool _CC_PBSZ(const std::string&, const std::string&);
+		bool _CC_USER(const std::string&, const std::string&);
+		bool _CC_PASS(const std::string&, const std::string&);
+		bool _CC_QUIT(const std::string&, const std::string&);
 
 		bool _CC_NotImplemented(const std::string&, const std::string&);
 
