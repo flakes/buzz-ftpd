@@ -1,3 +1,8 @@
+//
+// BuzzFTPInterface.h - part of buzz-ftpd
+// Copyright (c) 2011, cxxjoe
+// Please refer to the LICENSE file for details.
+//
 
 #ifndef _BUZZ_FTP_INTERFACE_H
 #define _BUZZ_FTP_INTERFACE_H

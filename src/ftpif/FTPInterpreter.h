@@ -1,3 +1,9 @@
+//
+// FTPInterpreter.h - part of buzz-ftpd
+// Copyright (c) 2011, cxxjoe
+// Please refer to the LICENSE file for details.
+//
+
 #ifndef _FTP_INTERPRETER_H
 #define _FTP_INTERPRETER_H
 

@@ -4,7 +4,7 @@ include_directories ( ${BUZZFTPD_SOURCE_DIR}/src/ftpif )
 
 add_executable (
 	buzz-ftpif
-	main.cpp
+	ftpif-main.cpp
 	FTPListener.cpp
 	FTPConnection.cpp
 	FTPInterpreter.cpp
