@@ -73,10 +73,17 @@ class CFTPInterpreter
 		virtual bool OnUser(const std::string& a_name) = 0;
 
 		/**
-		 * The implementing class must return whether the user name and password
-		 * combination is valid. The interpreter will form an appropriate response.
+		 * After receiving this event, the implementing class must validate
+		 * user name and password and call FeedAuthResult upon completition.
 		 **/
-		virtual bool OnPassword(const std::string& a_password) = 0;
+		virtual void OnPassword(const std::string& a_password) = 0;
+
+    /**
+     * Causes the interpreter to take appropiate action based on whether
+     * the client provided valid credentials.
+     * @see OnPassword
+     **/
+    void FeedAuthResult(bool a_positive);
 
 
 		/**
