@@ -40,7 +40,7 @@ class CFTPConnection :
 		virtual void FTPSend(int, const std::string&);
 		virtual void FTPDisconnect();
 		virtual bool OnAuth(const std::string&);
-		virtual int32_t OnPBSZ(int32_t);
+		virtual uint32_t OnPBSZ(uint32_t);
 		virtual bool OnUser(const std::string&);
 		virtual void OnPassword(const std::string&);
 		virtual void OnQuit(std::string&);
