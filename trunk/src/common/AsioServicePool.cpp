@@ -60,7 +60,7 @@ void CAsioServicePool::Run()
 void CAsioServicePool::Stop()
 {
 	// Explicitly stop all io_services.
-	for(size_t i = 0; i < io_services_.size(); i++)
+	for(size_t i = 0; i < m_ioServices.size(); i++)
 	{
 		m_ioServices[i]->stop();
 	}

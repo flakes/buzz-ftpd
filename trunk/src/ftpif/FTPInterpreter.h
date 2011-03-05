@@ -101,7 +101,7 @@ class CFTPInterpreter
 		int32_t m_pbsz;
 		bool m_secureCC;
 		char m_prot; // C or P
-}
+};
 
 
 #endif /* !_FTP_INTERPRETER_H */

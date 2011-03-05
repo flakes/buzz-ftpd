@@ -7,11 +7,11 @@ int main(int argc, char** argv)
 {
 	PAsioServicePool l_threadPool(new CAsioServicePool(4));
 
-  CFTPListener l_ftpListener(l_threadPool, 15000, "localhost");
+  CFTPListener l_ftpListener(l_threadPool);
 
-	l_ftpListener.Listen();
+	l_ftpListener.Listen(15000, "localhost");
 
-	l_threadPool.run();
+	l_threadPool->Run();
 
 	return 0;
 }
