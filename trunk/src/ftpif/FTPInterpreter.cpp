@@ -13,7 +13,7 @@ using std::stringstream;
 
 CFTPInterpreter::CFTPInterpreter()
 	: m_state(FTIST_INITIAL),
-	m_pbsz(0), // defaulting to 0 = RFC violation :TODO:
+	m_pbsz(0),
 	m_secureCC(false),
 	m_authenticated(false),
 	m_prot('C')
@@ -28,7 +28,13 @@ CFTPInterpreter::CFTPInterpreter()
 	m_ccHandlers["QUIT"] = &CFTPInterpreter::_CC_QUIT;
 
 	/* 502 */
-	m_ccHandlers["CCC"] = &CFTPInterpreter::_CC_NotImplemented;
+	m_ccHandlers["CCC"]  = &CFTPInterpreter::_CC_NotImplemented;
+	m_ccHandlers["CPSV"] = &CFTPInterpreter::_CC_NotImplemented;
+	m_ccHandlers["REIN"] = &CFTPInterpreter::_CC_NotImplemented;
+	// not implementing these violates RFC 1123, but we don't care:
+	m_ccHandlers["ACCT"] = &CFTPInterpreter::_CC_NotImplemented;
+	m_ccHandlers["HELP"] = &CFTPInterpreter::_CC_NotImplemented;
+	m_ccHandlers["APPE"] = &CFTPInterpreter::_CC_NotImplemented;
 }
 
 
@@ -56,7 +62,7 @@ void CFTPInterpreter::FTPResponse(int a_status, const string& a_text)
 			if(l_firstLine)
 				l_firstLine = false;
 			else
-				l_response += "  ";
+				l_response += " ";
 
 			l_response += l_line + "\r\n";
 		}
@@ -224,7 +230,7 @@ bool CFTPInterpreter::_CC_FEAT(const string& a_cmd, const string& a_args)
 		/* drftpd */
 		"PRET\n"
 		/* Miscellaneous */
-		"NOOP"
+		"TVFS"
 		// avoid trailing newline
 	);
 	return true;
@@ -252,7 +258,7 @@ bool CFTPInterpreter::_CC_PBSZ(const string& a_cmd, const string& a_args)
 	catch(std::exception& e)
 	{
 		this->FTPResponse(501, "Invalid size argument.");
-		return false;
+		return true;
 	}
 
 	uint32_t l_serverSize = this->OnPBSZ(l_clientSize);
@@ -344,6 +350,7 @@ void CFTPInterpreter::FeedCredentialResult(bool a_positive, const string& a_bann
 
 		this->FTPResponse(230, l_response);
 
+		m_authenticated = true;
 		m_state = FTIST_READY;
 	}
 	else
@@ -355,8 +362,8 @@ void CFTPInterpreter::FeedCredentialResult(bool a_positive, const string& a_bann
 
 
 /**
- * Misc client commands that return "502 Not Implemented."
- * RFC 959
+ * Handler for misc client commands that return "502 Not Implemented."
+ * You can find the list in the constructor.
  **/
 bool CFTPInterpreter::_CC_NotImplemented(const string& a_cmd, const string& a_args)
 {

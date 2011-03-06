@@ -95,8 +95,6 @@ void CFTPConnection::OnWrite(const boost::system::error_code& e)
 
 void CFTPConnection::OnShookHands(const boost::system::error_code& e)
 {
-	std::cout << "Shook hands (" << e << ")!" << std::endl;
-
 	// :TODO: try to differentiate FeedSSLHandshake arguments
 	// according to RFC 4217, section 10.1.
 
@@ -156,6 +154,7 @@ void CFTPConnection::FTPSend(int a_status, const std::string& a_response)
 	}
 }
 
+
 void CFTPConnection::FTPDisconnect()
 {
 	m_socket.close();
@@ -173,6 +172,8 @@ bool CFTPConnection::OnAuth(const std::string& a_method)
 			(a_method == "SSL" ? boost::asio::ssl::context::sslv23 : boost::asio::ssl::context::tlsv1))
 		);
 
+		m_sslCtx->set_options(boost::asio::ssl::context::default_workarounds | boost::asio::ssl::context::no_sslv2);
+
 		// :TODO: paths must be configurable
 		m_sslCtx->use_certificate_chain_file("server.pem");
 		m_sslCtx->use_private_key_file("server.pem", boost::asio::ssl::context::pem);
@@ -186,7 +187,9 @@ bool CFTPConnection::OnAuth(const std::string& a_method)
 
 uint32_t CFTPConnection::OnPBSZ(uint32_t a_size)
 {
-	return a_size;
+	// SSL/TLS = streaming protocol, no buffer/block size required
+	// RFC 4217, section 9
+	return 0;
 }
 
 
