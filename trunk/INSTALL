@@ -1,0 +1,15 @@
+
+== Supported operating systems ==
+
+  * GNU/Linux 2.6
+
+== Future supported operating systems ==
+
+  * Windows XP/2003 and later
+  * BSD flavors
+
+== Dependencies ==
+
+  * cmake 2.6 or later
+  * Boost libraries 1.46 or newer
+

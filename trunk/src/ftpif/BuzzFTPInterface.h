@@ -7,6 +7,9 @@
 #ifndef _BUZZ_FTP_INTERFACE_H
 #define _BUZZ_FTP_INTERFACE_H
 
+// cmake-generated fuzz
+#include "buzzconfig.h"
+
 // internal constants
 #define FTP_MAX_LINE 4096
 
