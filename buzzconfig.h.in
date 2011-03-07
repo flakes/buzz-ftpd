@@ -1,0 +1,9 @@
+// INPUT FILE FOR CMAKE
+
+#ifndef _BUZZCONFIG_H
+#define _BUZZCONFIG_H
+
+#cmakedefine _DEBUG
+
+#endif /* !_BUZZCONFIG_H */
+
