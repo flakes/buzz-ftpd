@@ -39,6 +39,8 @@ void CFTPListener::OnAccept(const boost::system::error_code& e)
 {
 	if(!e)
 	{
+		BUZZ_LOG(CLogger::LL_INFO, "Listener: Accepted new connection from " << m_newConnection->GetSocket().remote_endpoint());
+
 		m_newConnection->Start();
 
 		// prepare next connection:

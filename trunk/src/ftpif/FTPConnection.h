@@ -21,6 +21,7 @@ class CFTPConnection :
 {
 	public:
 		CFTPConnection(boost::asio::io_service& a_ioService);
+		virtual ~CFTPConnection();
 
 		void Start();
 		void Stop();

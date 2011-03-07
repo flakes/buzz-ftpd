@@ -31,4 +31,7 @@ using boost::numeric_cast;
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
+// logger
+#include "BuzzLogger.h"
+
 #endif /* !_BUZZ_FTP_INTERFACE_H */

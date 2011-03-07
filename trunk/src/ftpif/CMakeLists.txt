@@ -9,6 +9,7 @@ add_executable (
 	FTPConnection.cpp
 	FTPInterpreter.cpp
 	${BUZZFTPD_SOURCE_DIR}/src/common/AsioServicePool.cpp
+	${BUZZFTPD_SOURCE_DIR}/src/common/Logger.cpp
 )
 
 target_link_libraries (

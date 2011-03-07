@@ -15,7 +15,7 @@ CFTPConnection::CFTPConnection(boost::asio::io_service& a_ioService)
 	m_lineBuf(FTP_MAX_LINE + 1),
 	m_sslActive(false)
 {
-
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "CREATED");
 }
 
 
@@ -24,6 +24,8 @@ CFTPConnection::CFTPConnection(boost::asio::io_service& a_ioService)
  **/
 void CFTPConnection::Start()
 {
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "Start");
+
 	CFTPInterpreter::FeedConnect();
 
 	_ReadLineAsync();
@@ -32,6 +34,7 @@ void CFTPConnection::Start()
 
 void CFTPConnection::Stop()
 {
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "Stop");
 }
 
 
@@ -50,6 +53,9 @@ void CFTPConnection::OnRead(const boost::system::error_code& e)
 
 		// remove whitespace:
 		boost::algorithm::trim(l_line);
+
+		BUZZ_LOG_THIS(CLogger::LL_DEBUG, "Connection << [" << l_line << "]");
+
 		// and feed it into the state machine:
 		if(CFTPInterpreter::FeedLine(l_line))
 		{
@@ -83,8 +89,12 @@ void CFTPConnection::OnWrite(const boost::system::error_code& e)
 	{
 		m_sslHandshakeAfterNextWrite = false;
 
+		BUZZ_LOG_THIS(CLogger::LL_DEBUG, "SSL: Creating SSL stream");
+
 		m_sslSocket = boost::shared_ptr<boost::asio::ssl::stream<boost::asio::ip::tcp::socket&> >(
 			new boost::asio::ssl::stream<boost::asio::ip::tcp::socket&>(m_socket, *m_sslCtx));
+
+		BUZZ_LOG_THIS(CLogger::LL_DEBUG, "SSL: Shaking hands");
 
 		m_sslSocket->async_handshake(boost::asio::ssl::stream_base::server,
 			boost::bind(&CFTPConnection::OnShookHands, shared_from_this(),
@@ -98,9 +108,13 @@ void CFTPConnection::OnShookHands(const boost::system::error_code& e)
 	// :TODO: try to differentiate FeedSSLHandshake arguments
 	// according to RFC 4217, section 10.1.
 
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "SSL: Shook hands: " << e);
+
 	if(!e)
 	{
 		m_sslActive = true;
+
+		BUZZ_LOG_THIS(CLogger::LL_INFO, "Connection: CC now secure");
 
 		CFTPInterpreter::FeedSSLHandshake(true, true);
 
@@ -139,6 +153,8 @@ void CFTPConnection::_ReadLineAsync()
 void CFTPConnection::FTPSend(int a_status, const std::string& a_response)
 {
 	CAsioSmartBuffer l_buf(a_response);
+
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "Connection >> [" << a_response << "]");
 
 	if(!m_sslActive)
 	{
@@ -209,3 +225,10 @@ void CFTPConnection::OnQuit(std::string& ar_message)
 {
 	return;
 }
+
+
+CFTPConnection::~CFTPConnection()
+{
+	BUZZ_LOG_THIS(CLogger::LL_DEBUG, "DESTROYED");
+}
+
