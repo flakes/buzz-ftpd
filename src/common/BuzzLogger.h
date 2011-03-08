@@ -20,10 +20,10 @@ extern boost::shared_ptr<CLogger> _s_BuzzLogger;
 // ugly preprocessor magic below this line.
 
 #ifdef _DEBUG
-	#define BUZZ_LOG(LEVEL, ARGS) _BUZZLOG(LEVEL, ARGS)
+	#define BUZZ_LOG(LEVEL, ARGS) _BUZZ_LOG(LEVEL, ARGS)
 #else
 	// allow compiler to optimize away DEBUG log messages:
-	#define BUZZ_LOG(LEVEL, ARGS) if(LEVEL != CLogger::LL_DEBUG) { _BUZZLOG(LEVEL, ARGS); }
+	#define BUZZ_LOG(LEVEL, ARGS) if(LEVEL != CLogger::LL_DEBUG) { _BUZZ_LOG(LEVEL, ARGS); }
 #endif
 
 #define _BUZZ_LOG(LEVEL, ARGS) do { \

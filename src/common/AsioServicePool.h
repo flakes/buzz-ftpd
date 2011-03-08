@@ -11,6 +11,7 @@
 #ifndef _ASIO_SERVICE_POOL_H
 #define _ASIO_SERVICE_POOL_H
 
+#include "buzzconfig.h"
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>

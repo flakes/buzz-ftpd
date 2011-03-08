@@ -7,6 +7,7 @@
 #ifndef _LOGGER_H
 #define _LOGGER_H
 
+#include "buzzconfig.h"
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/noncopyable.hpp>
