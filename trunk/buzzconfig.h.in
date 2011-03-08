@@ -5,5 +5,19 @@
 
 #cmakedefine _DEBUG
 
-#endif /* !_BUZZCONFIG_H */
 
+#ifdef _WIN32
+	// use Windows Server 2008/Vista-compatible SDK
+	#define WINVER 0x0600
+	#define _WIN32_IE 0x0700
+	#define _WIN32_WINNT WINVER
+	#define _WIN32_WINDOWS WINVER
+
+	#define _CRT_SECURE_NO_WARNINGS
+	#define WIN32_LEAN_AND_MEAN
+	#define VC_EXTRALEAN
+	#define STRICT
+	#define NOMINMAX
+#endif
+
+#endif /* !_BUZZCONFIG_H */
