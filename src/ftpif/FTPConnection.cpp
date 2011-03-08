@@ -118,6 +118,13 @@ void CFTPConnection::OnShookHands(const boost::system::error_code& e)
 
 		CFTPInterpreter::FeedSSLHandshake(true, true);
 
+		if(m_lineBuf.size() > 0)
+		{
+			// Protect against 'STARTTLS' type vulnerability:
+			// (Ref: http://www.securityfocus.com/archive/1/516901/30/0/threaded )
+			m_lineBuf.consume(m_lineBuf.size());
+		}
+
 		_ReadLineAsync();
 	}
 	else

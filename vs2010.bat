@@ -4,6 +4,8 @@ REM Requires Visual Studio 2010
 REM Boost must have been extracted to deps\boost, then built using 'bootstrap' and '.\bjam'
 REM OpenSSL must have been built with --prefix=blah\buzz-ftpd\deps\openssl
 
+REM !! x64 Windows builds have yet to be tested !!
+
 if %cd%\==%~dp0 GOTO BADCWD
 
 call "%VS100COMNTOOLS%\vsvars32.bat"

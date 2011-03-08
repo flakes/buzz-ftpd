@@ -7,11 +7,23 @@ project ( BUZZFTPD )
 
 ### Look for boost headers and libraries ###
 
+# use static libs because
+# - it's cleaner on Windows, binaries stay small too
+# - it's possible to get rid of the boost folder after compiling on Linux (huge bins though)
 set ( Boost_USE_STATIC_LIBS ON )
+
+if ( NOT MSVC )
+	# Static boost libs require linking to pthread on Linux
+	set ( CMAKE_USE_PTHREADS_INIT 1 )
+	include ( FindThreads )
+endif ()
+
 find_package ( Boost 1.46 REQUIRED COMPONENTS system regex thread filesystem )
 
 link_directories ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
+
+set ( Boost_LIBRARIES ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 ### Look for OpenSSL ###
 
@@ -29,6 +41,7 @@ if ( MSVC AND NOT OPENSSL_LIBRARIES )
 	set ( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
 
 	if ( OPENSSL_LIBRARIES )
+		message ( STATUS "Please ignore the previous OpenSSL not found-type message, it's fine." )
 		set ( OPENSSL_FOUND 1 )
 	endif ()
 endif ()
