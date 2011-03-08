@@ -23,7 +23,13 @@ find_package ( Boost 1.46 REQUIRED COMPONENTS system regex thread filesystem )
 link_directories ( ${Boost_LIBRARY_DIRS} )
 include_directories ( ${Boost_INCLUDE_DIRS} )
 
-set ( Boost_LIBRARIES ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+if ( NOT MSVC )
+	if ( NOT CMAKE_USE_PTHREADS_INIT )
+		message ( FATAL_ERROR "Where the hell is your pthreads?" )
+	endif ()
+
+	set ( Boost_LIBRARIES ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+endif ()
 
 ### Look for OpenSSL ###
 
