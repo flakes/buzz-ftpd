@@ -7,6 +7,7 @@ project ( BUZZFTPD )
 
 ### Look for boost headers and libraries ###
 
+set ( Boost_USE_STATIC_LIBS ON )
 find_package ( Boost 1.46 REQUIRED COMPONENTS system regex thread filesystem )
 
 link_directories ( ${Boost_LIBRARY_DIRS} )
@@ -14,11 +15,27 @@ include_directories ( ${Boost_INCLUDE_DIRS} )
 
 ### Look for OpenSSL ###
 
+# If OPENSSL_ROOT_DIR was defined in the environment, use it.
+if ( NOT $ENV{OPENSSL_ROOT_DIR} STREQUAL "" )
+	set ( OPENSSL_ROOT_DIR $ENV{OPENSSL_ROOT_DIR} )
+endif ()
+
 include ( FindOpenSSL )
+
+# work around stupid/outdated FindOpenSSL on Windows:
+if ( MSVC AND NOT OPENSSL_LIBRARIES )
+	FIND_LIBRARY ( LIB_EAY NAMES libeay32 PATHS ${OPENSSL_ROOT_DIR}/lib )
+	FIND_LIBRARY ( SSL_EAY NAMES ssleay32 PATHS ${OPENSSL_ROOT_DIR}/lib )
+	set ( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
+
+	if ( OPENSSL_LIBRARIES )
+		set ( OPENSSL_FOUND 1 )
+	endif ()
+endif ()
 
 if ( NOT OPENSSL_FOUND )
 	message ( FATAL_ERROR "Unable to locate OpenSSL." )
-endif ( NOT OPENSSL_FOUND )
+endif ()
 
 link_directories ( ${OPENSSL_LIBRARY_DIRS} )
 include_directories ( ${OPENSSL_INCLUDE_DIR} )
@@ -27,7 +44,7 @@ include_directories ( ${OPENSSL_INCLUDE_DIR} )
 
 if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
 	set ( _DEBUG 1 )
-endif ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+endif ()
 
 configure_file (
 	"${BUZZFTPD_SOURCE_DIR}/buzzconfig.h.in"

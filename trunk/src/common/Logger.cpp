@@ -56,7 +56,7 @@ bool CLogger::Start()
 
 void CLogger::Log(ELogLevel a_level, const std::string& a_message)
 {
-	if(m_minLogLevel & (int)a_level == 0)
+	if((m_minLogLevel & (int)a_level) == 0)
 	{
 		return;
 	}
@@ -156,6 +156,8 @@ bool CLogger::Stop()
 	// :TODO: find out if this works as expected if Start()
 	// is called immediately after returning from Stop():
 	m_stopped = true;
+
+	return true;
 }
 
 
