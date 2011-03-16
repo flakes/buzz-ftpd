@@ -69,6 +69,10 @@ endif ()
 link_directories ( ${OPENSSL_LIBRARY_DIRS} )
 include_directories ( ${OPENSSL_INCLUDE_DIR} )
 
+### Compile 3rd party libs ###
+
+add_subdirectory ( 3rdparty )
+
 ### Create buzzconfig.h ###
 
 if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
@@ -76,7 +80,7 @@ if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
 endif ()
 
 configure_file (
-	"${BUZZFTPD_SOURCE_DIR}/buzzconfig.h.in"
+	"${BUZZFTPD_SOURCE_DIR}/src/buzzconfig.h.in"
 	"${BUZZFTPD_BINARY_DIR}/buzzconfig.h"
 )
 
