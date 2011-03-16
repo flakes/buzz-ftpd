@@ -3,6 +3,16 @@
 
 cmake_minimum_required ( VERSION 2.6 FATAL_ERROR )
 
+if ( DEFINED CMAKE_BUILD_TYPE )
+	set ( CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the
+	type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS
+	used) Debug Release RelWithDebInfo MinSizeRel." )
+else ()
+	set ( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of
+	build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used)
+	Debug Release RelWithDebInfo MinSizeRel." )
+endif ()
+
 project ( BUZZFTPD )
 
 ### Look for boost headers and libraries ###
@@ -38,7 +48,7 @@ if ( NOT $ENV{OPENSSL_ROOT_DIR} STREQUAL "" )
 	set ( OPENSSL_ROOT_DIR $ENV{OPENSSL_ROOT_DIR} )
 endif ()
 
-include ( FindOpenSSL )
+find_package ( OpenSSL )
 
 # work around stupid/outdated FindOpenSSL on Windows:
 if ( MSVC AND NOT OPENSSL_LIBRARIES )
@@ -81,5 +91,6 @@ add_subdirectory ( src )
 message ( STATUS "" )
 message ( STATUS "  System: ${CMAKE_SYSTEM}" )
 message ( STATUS "  CPU: ${CMAKE_HOST_SYSTEM_PROCESSOR}" )
+message ( STATUS "  Build type: ${CMAKE_BUILD_TYPE}" )
 message ( STATUS "" )
 
